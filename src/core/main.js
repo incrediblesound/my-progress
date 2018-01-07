@@ -55,14 +55,23 @@ class MainData {
       this.save()
     }
   }
-  completeTasks(tasks) {
+  getUserChain() {
     const { users } = this.data
     const userData = users.find(user => user.name === this.data.currentUser)
     const dataFilePath = getUserFilePath(userData.name)
 
-    const userChain = new UserChain(dataFilePath, userData)
+    return new UserChain(dataFilePath, userData)
+  }
+  completeTasks(tasks) {
+    const userChain = this.getUserChain()
     userChain.initialize().then(() => {
       userChain.completeTasks(tasks)
+    })
+  }
+  checkStatus() {
+    const userChain = this.getUserChain()
+    userChain.initialize().then(() => {
+      userChain.checkStatus()
     })
   }
 }

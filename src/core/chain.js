@@ -4,6 +4,13 @@ const addDays = require('date-fns/add_days')
 const isToday = require('date-fns/is_today')
 const subDays = require('date-fns/sub_days')
 
+
+const colors = require('colors/safe')
+const yellow = colors.yellow
+const red = colors.red
+const green = colors.green
+const bold = colors.bold
+
 /*
 [
   {
@@ -15,6 +22,7 @@ const subDays = require('date-fns/sub_days')
 
 class UserChain {
   constructor(dataFilePath, userData) {
+    this.userName = userData.name
     this.userTasks = userData.tasks
     this.dataFilePath = dataFilePath
   }
@@ -58,6 +66,42 @@ class UserChain {
       this.chain.push(today)
     }
     this.save()
+  }
+  checkStatus() {
+    if (!this.chain.length) {
+      console.log('No history for this user')
+    } else {
+      console.log(`\n- - - Productivity Report for ${bold(this.userName)} - - -`)
+      const today = new Date()
+      const record = {}
+      this.userTasks.forEach(task => {
+        for (let i = this.chain.length - 1; i >= 0; i --) {
+          const currentDay = this.chain[i]
+          if (currentDay.tasks[task]) {
+            record[task] = currentDay.date
+            break
+          }
+        }
+      })
+      this.userTasks.forEach(task => {
+        if (!record[task]) {
+          console.log(`\nThere is no record of you ever completing the task "${task}"`)
+        } else {
+          const completed = new Date(record[task])
+          const diff = differenceInCalendarDays(today, completed)
+          if (!diff) {
+            console.log(`\n${green('Good job!')} You completed the task ${bold(task)} today.`)
+          } else if (diff > 3) {
+            console.log(`\n${green('Not bad!')} You completed the task ${bold(task)} ${diff} days ago.`)
+          } else if (diff > 5) {
+            console.log(`\n${yellow('WARNING')}: You haven't complete the task ${bold(task)} in ${diff} days.`)
+          } else {
+            console.log(`\n${red('ALERT!!!')} It has been ${diff} days since you completed ${bold(task)}!`)
+          }
+        }
+      })
+    }
+    console.log('\n')
   }
   addTasksToDay(day, tasks) { /* MUTATION */
     tasks.forEach(task => {
