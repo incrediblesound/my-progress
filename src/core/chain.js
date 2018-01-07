@@ -90,13 +90,13 @@ class UserChain {
           const completed = new Date(record[task])
           const diff = differenceInCalendarDays(today, completed)
           if (!diff) {
-            console.log(`\n${green('Good job!')} You completed the task ${bold(task)} today.`)
+            console.log(`\n${green('Good job!')} You completed the task "${task}" today.`)
           } else if (diff > 3) {
-            console.log(`\n${green('Not bad!')} You completed the task ${bold(task)} ${diff} days ago.`)
+            console.log(`\n${green('Not bad!')} You completed the task "${task}" ${diff} days ago.`)
           } else if (diff > 5) {
-            console.log(`\n${yellow('WARNING')}: You haven't complete the task ${bold(task)} in ${diff} days.`)
+            console.log(`\n${yellow('WARNING')}: You haven't complete the task "${task}" in ${diff} days.`)
           } else {
-            console.log(`\n${red('ALERT!!!')} It has been ${diff} days since you completed ${bold(task)}!`)
+            console.log(`\n${red('ALERT!!!')} It has been ${diff} days since you completed "${task}"!`)
           }
         }
       })

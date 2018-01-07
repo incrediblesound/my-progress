@@ -1,32 +1,42 @@
 const diskUtils = require('../diskUtils/index.js')
 const UserChain = require('./chain.js')
 
-const PREFIX = '../data/'
-const mainFile = '../data/pg_main_data.json'
-const getUserFilePath = (name) => `${PREFIX}${name}_pg_data.json`
+const PREFIX = '/../data/'
+const mainFile = '/../data/pg_main_data.json'
+const getUserFilePath = (pathToSrc, name) => `${pathToSrc}${PREFIX}${name}_pg_data.json`
 
 class MainData {
-  constructor(data = {}){
+  constructor(data){
+    this.pathToSrc = data.pathToSrc
     this.data = {
       currentUser: data.currentUser || null,
       users: data.users || [],
     }
   }
+  changeUser(name) {
+    const { users } = this.data
+    const exists = !!users.find(user => user.name === name)
+    if (!exists) {
+      console.log(`There is not user "${name}"`)
+    } else {
+      this.data.currentUser = name
+      this.save()
+    }
+  }
   addUser(name) {
     const { users } = this.data
-    const exists = !!users.filter(user => user.name === name).length
+    const exists = !!users.find(user => user.name === name)
     const hasSpaces = /\s/.test(name)
     if (exists) {
       console.log('A user with this name already exists')
     } else if (hasSpaces) {
       console.log('Username cannot contain spaces')
     } else {
-      const dataFile = getUserFilePath(name)
-
-      diskUtils.create(PREFIX + dataFile).then(() => {
+      const dataFilePath = getUserFilePath(this.pathToSrc, name)
+      diskUtils.create(dataFilePath).then(() => {
         users.push({
           name,
-          dataFile,
+          dataFilePath,
           tasks: [],
         })
         this.data.currentUser = name
@@ -36,7 +46,7 @@ class MainData {
   }
   save() {
     const data = JSON.stringify(this.data)
-    diskUtils.create(mainFile, data)
+    diskUtils.create(`${this.pathToSrc}${mainFile}`, data)
   }
   addTasks(tasks) {
     const { users } = this.data
@@ -58,7 +68,7 @@ class MainData {
   getUserChain() {
     const { users } = this.data
     const userData = users.find(user => user.name === this.data.currentUser)
-    const dataFilePath = getUserFilePath(userData.name)
+    const dataFilePath = getUserFilePath(this.pathToSrc, userData.name)
 
     return new UserChain(dataFilePath, userData)
   }
