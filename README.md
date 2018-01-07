@@ -1,12 +1,12 @@
 My Progress
 =============
 
-I personally do not like productivity tools, but I thought it might be useful to have a super minimal command-line utility that could help me catch myself if I start getting lazy about certain habits. Progress aims to be a tool that, given the least amount of input possible, will allow you to hold yourself accountable to your productivity goals.
+I personally don't like productivity tools, but I thought it might be useful to have a super minimal command-line utility that could help me catch myself if I start getting lazy about certain habits. My-progress aims to be a tool that, given the least amount of input possible, will help you hold yourself accountable to your productivity goals.
 
 Go go go!
 ---------
 
-You should be able to call my-progress easily from anywhere in the terminal, so first add a simple alias to my-progress to your dot-file. Your alias should point to the `progress.js` file inside the `src` directory and will look something like this:
+You should be able to call my-progress easily from anywhere in the terminal, so first add a simple alias to my-progress to your dot file. Your alias should point to `src/progress.js` in this repo and will look something like this:
 `alias mp='node /Users/cool.guy/cool-projects/progress/src/progress.js'`
 I will continue to use the `mp` alias throughout this documenation.
 
@@ -60,6 +60,11 @@ change user
 `mp --user ${name}`
 
 Changes the current user.
+
+Implementation Details
+----------------------
+
+My-progress maintains a single file containing information about all users and a separate file for each user containing their task history. Each file is JSON format which are consumed by the program, modified, and the re-written in their entirety to disk. It would probably be more performant to use a simpler text format for the task history file that would allow append operations, but at this early stage I am using the simplest possible implementation.
 
 TODOs
 -----
