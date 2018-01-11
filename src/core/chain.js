@@ -11,6 +11,8 @@ const red = colors.red
 const green = colors.green
 const bold = colors.bold
 
+const isDaysAgoCommand = (str) => /\-\-days\-ago\=[0-9]+/.test(str)
+
 /*
 [
   {
@@ -35,37 +37,37 @@ class UserChain {
         } else {
           this.chain = JSON.parse(dataString)
         }
+        return this.populateEmptyDays()
       })
   }
   completeTasks(tasks) {
     let today;
-    if (this.chain.length) {
-      const lastDay = this.chain[this.chain.length - 1]
-      const lastDateString = lastDay.date
-      const lastDate = new Date(lastDateString)
-      const diff = differenceInCalendarDays(new Date(), lastDate)
-      if (isToday(lastDate)) {
-        /* modify existing "today" record */
-        this.addTasksToDay(lastDay, tasks)
-      } else if (diff > 1) {
-        /* fill in gap, create and then modify today record */
-        this.populateEmptyDays()
-        today = newDayFactory(new Date())
-        this.addTasksToDay(today, tasks)
-        this.chain.push(today)
-      } else {
-        /* add new record for today */
-        today = newDayFactory(new Date())
-        this.addTasksToDay(today, tasks)
-        this.chain.push(today)
-      }
+    if (isDaysAgoCommand(tasks[0])){
+      const [ daysAgo, ...taskList ] = tasks
+      this.completePastTask(daysAgo, taskList)
     } else {
-      /* first record */
-      today = newDayFactory(new Date())
+      const today = this.chain[this.chain.length - 1]
       this.addTasksToDay(today, tasks)
-      this.chain.push(today)
     }
     this.save()
+  }
+  completePastTask(daysAgoCommand, tasks) {
+    const commandParts = daysAgoCommand.split('=')
+    const daysAgo = parseInt(commandParts[1])
+    const targetDay = subDays(new Date(), daysAgo)
+    const found = false
+
+    for (let i = this.chain.length - 1; i >= 0; i --) {
+      const currentDay = this.chain[i]
+      if (!differenceInCalendarDays(targetDay, currentDay.date)) {
+        this.addTasksToDay(currentDay, tasks)
+        this.found = true
+        break
+      }
+    }
+    if (!found) {
+      console.log(`${red('ERROR')}: past day is before beginning of user history`)
+    }
   }
   checkStatus() {
     if (!this.chain.length) {
@@ -91,9 +93,9 @@ class UserChain {
           const diff = differenceInCalendarDays(today, completed)
           if (!diff) {
             console.log(`\n${green('Good job!')} You completed the task "${task}" today.`)
-          } else if (diff > 3) {
-            console.log(`\n${green('Not bad!')} You completed the task "${task}" ${diff} days ago.`)
-          } else if (diff > 5) {
+          } else if (diff < 2) {
+            console.log(`\nYou completed the task "${task}" yesterday.`)
+          } else if (diff < 5) {
             console.log(`\n${yellow('WARNING')}: You haven't complete the task "${task}" in ${diff} days.`)
           } else {
             console.log(`\n${red('ALERT!!!')} It has been ${diff} days since you completed "${task}"!`)
@@ -119,16 +121,22 @@ class UserChain {
     lastDay.date = newDate.toDateString()
   }
   populateEmptyDays() {
-    const lastDateString = this.chain[this.chain.length - 1].date
-    const lastDate = new Date(lastDateString)
-    const diff = differenceInCalendarDays(new Date(), lastDate)
-    if (diff > 1) {
-      let nextDay = lastDate
-      for (let i = 0; i < diff - 1; i++) {
-        nextDay = addDays(nextDay, 1)
-        this.chain.push(newDayFactory(nextDay))
+    if (this.chain.length) {
+      const lastDateString = this.chain[this.chain.length - 1].date
+      const lastDate = new Date(lastDateString)
+      const diff = differenceInCalendarDays(new Date(), lastDate)
+      if (diff) {
+        let nextDay = lastDate
+        for (let i = 0; i < diff; i++) {
+          nextDay = addDays(nextDay, 1)
+          this.chain.push(newDayFactory(nextDay))
+        }
       }
+    } else {
+      const today = newDayFactory(new Date())
+      this.chain.push(today)
     }
+    return this.save()
   }
   save() {
     const dataString = JSON.stringify(this.chain)
