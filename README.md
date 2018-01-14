@@ -12,12 +12,12 @@ I will continue to use the `mp` alias throughout this documenation.
 
 add user
 --------
-`mp --new-user ${name}`
+`mp new-user ${name}`
 
 This command adds a new user to my-progress and set the current user to be the new user. Any subsequent commands will update the information of this new user.
 
 Example:   
-`mp --new-user bob`
+`mp new-user bob`
 
 add tasks
 ---------
@@ -57,7 +57,7 @@ Good job! You completed the task "music" today.
 
 change user
 -----------
-`mp --user ${name}`
+`mp user ${name}`
 
 Changes the current user.
 

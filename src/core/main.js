@@ -1,5 +1,6 @@
 const diskUtils = require('../diskUtils/index.js')
 const UserChain = require('./chain.js')
+const colors = require('colors/safe')
 
 const PREFIX = '/../data/'
 const mainFile = '/../data/pg_main_data.json'
@@ -22,6 +23,9 @@ class MainData {
       this.data.currentUser = name
       this.save()
     }
+  }
+  currentUser() {
+    console.log(`\nCurrent user: ${colors.bold(this.data.currentUser)}\n`)
   }
   addUser(name) {
     const { users } = this.data

@@ -8,11 +8,12 @@ mp complete read
 mp status
 */
 
-const NEW_USER = '--new-user'
-const CHANGE_USER = '--user'
+const NEW_USER = 'new-user'
+const CHANGE_USER = 'user'
 const NEW_TASKS = 'tasks'
 const COMPLETE = 'complete'
 const STATUS = 'status'
+const USER = 'user'
 
 const mainFile = '/../data/pg_main_data.json'
 
@@ -55,6 +56,8 @@ openOrCreate(`${pathToSrc}${mainFile}`, 'r')
         case NEW_USER:
           mainData.addUser(args[0])
           break
+        case USER:
+          mainData.currentUser()
       }
     }
   })
