@@ -37,6 +37,14 @@ Sets the task to completed for today.
 Example:   
 `mp complete read`
 
+### Past Tasks
+Sometimes you might forget to complete a task and want to update you log the next day. To do that you can use the `--days-ago` option:   
+`mp complete --days-ago=${number} ${task}`
+
+Example:   
+`mp complete --days-ago=2 exercise`
+
+
 progress status
 ---------------
 `mp status`
