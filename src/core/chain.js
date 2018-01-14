@@ -55,13 +55,13 @@ class UserChain {
     const commandParts = daysAgoCommand.split('=')
     const daysAgo = parseInt(commandParts[1])
     const targetDay = subDays(new Date(), daysAgo)
-    const found = false
+    let found = false
 
     for (let i = this.chain.length - 1; i >= 0; i --) {
       const currentDay = this.chain[i]
-      if (!differenceInCalendarDays(targetDay, currentDay.date)) {
+      if (!differenceInCalendarDays(new Date(currentDay.date), targetDay)) {
         this.addTasksToDay(currentDay, tasks)
-        this.found = true
+        found = true
         break
       }
     }
