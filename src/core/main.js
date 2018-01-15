@@ -1,6 +1,7 @@
 const diskUtils = require('../diskUtils/index.js')
 const UserChain = require('./chain.js')
 const colors = require('colors/safe')
+const generateStaticPage = require('./generateStaticPage.js')
 
 const PREFIX = '/../data/'
 const mainFile = '/../data/pg_main_data.json'
@@ -86,6 +87,14 @@ class MainData {
     const userChain = this.getUserChain()
     userChain.initialize().then(() => {
       userChain.checkStatus()
+    })
+  }
+  generateHTML() {
+    const userChain = this.getUserChain()
+    userChain.initialize().then(() => {
+      const { chain, userTasks } = userChain
+      const html = generateStaticPage(chain, userTasks)
+      diskUtils.create(`${this.pathToSrc}/../index.html`, html)
     })
   }
 }

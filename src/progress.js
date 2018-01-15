@@ -14,6 +14,7 @@ const NEW_TASKS = 'tasks'
 const COMPLETE = 'complete'
 const STATUS = 'status'
 const USER = 'user'
+const STATIC = 'static'
 
 const mainFile = '/../data/pg_main_data.json'
 
@@ -58,6 +59,8 @@ openOrCreate(`${pathToSrc}${mainFile}`, 'r')
           break
         case USER:
           mainData.currentUser()
+        case STATIC:
+          mainData.generateHTML()
       }
     }
   })
