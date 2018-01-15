@@ -63,6 +63,10 @@ Good job! You completed the task "music" today.
 
 ```
 
+`mp static`
+
+Generates an index.html file with a table that illustrates your task completion over time. While the status command can warn you about areas where you are lagging behind, the table is better for observing long term trends.
+
 change user
 -----------
 `mp user ${name}`
