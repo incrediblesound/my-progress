@@ -81,5 +81,3 @@ My-progress maintains a single file containing information about all users and a
 TODOs
 -----
 - generate a chart of task history in the terminal
-- generate a static website that is pretty(ish)
-- handle properly tasks that are added after there is already a history
